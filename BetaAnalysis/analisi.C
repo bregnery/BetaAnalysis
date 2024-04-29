@@ -72,9 +72,7 @@ void analisi()
   int n_points_baseline = cf.Value("HEADER", "n_points_baseline");
 
   // Input file
-  std::string path = cf.Value("HEADER", "filename_path");
-  std::string file_in = cf.Value("HEADER", "input_filename");
-  std::string Filename = path + "raw/" + file_in;
+  std::string Filename = cf.Value("HEADER", "input_filepath");
   std::cout << "Anaysis of file " << Filename << " started" << endl;
   const char *filename = Filename.c_str();
   TFile *file = TFile::Open(filename);
