@@ -68,8 +68,9 @@ void analisi()
   std::cout << "Anaysis of file " << Filename << " started" << endl;
   const char *filename = Filename.c_str();
   TFile *file = TFile::Open(filename);
-  TTree *itree = dynamic_cast<TTree *>(file->Get("wfm"));
-  TTreeReader myReader("wfm", file);
+  TTree *itree = dynamic_cast<TTree *>(file->Get("wfm")); // TODO: Why is this here? It is never referenced again.
+  TTreeReader wfmReader("wfm", file);
+  TTreeReader metaReader("meta", file);
 
   // Output file & tree
   std::string outFilename;
@@ -170,15 +171,15 @@ void analisi()
   for (int ch_counter = 0; ch_counter < active_channels; ch_counter++)
   {
 
-    voltageReader1.push_back(TTreeReaderArray<Double32_t>(myReader, Form("w%i", ch_counter)));
+    voltageReader1.push_back(TTreeReaderArray<Double32_t>(wfmReader, Form("w%i", ch_counter)));
   }
 
-  voltageReader1.push_back(TTreeReaderArray<Double32_t>(myReader, "trg0"));
-  voltageReader1.push_back(TTreeReaderArray<Double32_t>(myReader, "trg1"));
+  voltageReader1.push_back(TTreeReaderArray<Double32_t>(wfmReader, "trg0"));
+  voltageReader1.push_back(TTreeReaderArray<Double32_t>(wfmReader, "trg1"));
 
-  TTreeReaderArray<Double32_t> posReader(myReader, "pos"); // uncomment to have stage position (TCT only)
+  TTreeReaderArray<Double32_t> posReader(metaReader, "pos"); // uncomment to have stage position (TCT only)
 
-  while (myReader.Next())
+  while (wfmReader.Next())
   {
 
     Pmax1.clear();
