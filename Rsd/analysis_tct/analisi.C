@@ -69,12 +69,13 @@ void analisi()
   const char *filename = Filename.c_str();
   TFile *file = TFile::Open(filename);
   TTree *itree = dynamic_cast<TTree *>(file->Get("wfm")); // TODO: Why is this here? It is never referenced again.
+  TTree *metatree = dynamic_cast<TTree *>(file->Get("meta")); // TODO: Why is this here? It is never referenced again.
   TTreeReader wfmReader("wfm", file);
   TTreeReader metaReader("meta", file);
 
   // Output file & tree
   std::string outFilename;
-  outFilename = path + "stats/stats_" + file_in;
+  outFilename = Filename.substr(0, Filename.find_last_of("/")) + "/stats/stats_" + Filename.substr(Filename.find_last_of("/") + 1);
   const char *output_filename = outFilename.c_str();
   TFile *OutputFile = new TFile(output_filename, "recreate");
   TTree *OutTree = new TTree("Analysis", "Analysis");
@@ -177,7 +178,7 @@ void analisi()
   voltageReader1.push_back(TTreeReaderArray<Double32_t>(wfmReader, "trg0"));
   voltageReader1.push_back(TTreeReaderArray<Double32_t>(wfmReader, "trg1"));
 
-  TTreeReaderArray<Double32_t> posReader(metaReader, "pos"); // uncomment to have stage position (TCT only)
+  TTreeReaderArray<long long> posReader(metaReader, "pos"); // uncomment to have stage position (TCT only)
 
   while (wfmReader.Next())
   {
@@ -205,6 +206,7 @@ void analisi()
     w1.clear();
     t1.clear();
 
+    metaReader.Next();
     x_pos = double(posReader[0]); // uncomment to have stage position (TCT only)
     y_pos = double(posReader[1]);
 
